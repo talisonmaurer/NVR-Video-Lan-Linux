@@ -1,0 +1,408 @@
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#e7edf3;background:#0c121c;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}.app{display:flex;min-height:100vh}.sidebar{width:245px;flex-shrink:0;background:#111b28;border-right:1px solid #263445;display:flex;flex-direction:column}
+.logo{display:flex;align-items:center;gap:11px;padding:25px 21px;border-bottom:1px solid #263445}.logo b{font-size:15px}.logo small{display:block;color:#8494aa;font-size:11px;margin-top:4px}
+.brand-mark{font-size:30px;color:#4ec3a9}.nav{display:flex;flex-direction:column;padding:19px 12px;gap:7px}
+.nav-item{background:transparent;border:0;color:#9aabbe;border-radius:10px;text-align:left;padding:13px;display:flex;gap:11px;align-items:center}
+.nav-item.selected,.nav-item:hover{color:#edfffb;background:#193d3b}
+.sidebar-bottom{margin-top:auto;border-top:1px solid #263445;padding:18px;display:flex;align-items:center;gap:9px;font-size:12px;color:#b6c4d2}
+.sidebar-bottom button{margin-left:auto;border:0;background:none;color:#bdc8d6}.status-dot{width:8px;height:8px;background:#4ac3a0;border-radius:50%}
+.workspace{padding:30px;flex:1;min-width:0;max-width:1750px;margin:0 auto}
+header,.top-actions{display:flex;align-items:center;justify-content:space-between;gap:16px}
+header h1{font-size:26px;letter-spacing:-.7px;margin:6px 0 0}.eyebrow{color:#5fceb0;font-weight:700;font-size:10px;letter-spacing:2px}
+.clock{font-size:12px;color:#8494aa;white-space:nowrap}.primary{border:0;border-radius:8px;color:#08261f;background:#54c9ab;font-weight:700;padding:12px 17px}
+.primary:hover{background:#87e7cc}.secondary{padding:12px 17px;color:#dce7f2;border:1px solid #3b4b60;border-radius:8px;background:#1d2b3b}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:27px 0 34px}.stats article,.storage-box{border:1px solid #293a4a;background:#131f2c;border-radius:12px;padding:20px}
+.stats small,.storage-box small{display:block;color:#8ca0b4;font-size:10px;letter-spacing:1.1px}.stats strong{display:block;font-size:27px;margin-top:8px}
+.section-title{margin-bottom:20px}.section-title h2{font-size:20px;margin:0 0 5px}.section-title p{font-size:13px;color:#91a3b5;margin:0}
+.camera-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.camera{border:1px solid #2b3c4d;border-radius:12px;overflow:hidden;background:#15202c}
+.camera-top{padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}.camera-name{font-size:14px;font-weight:700}.camera-state{color:#a8b8c7;font-size:11px}
+.video-wrap{position:relative;aspect-ratio:16/9;background:#050b12;display:flex;align-items:center;justify-content:center}
+.video-wrap video{width:100%;height:100%;object-fit:contain}.video-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#8292a3;text-align:center;font-size:12px;pointer-events:none}
+.camera-controls{display:flex;flex-wrap:wrap;gap:7px;padding:12px}.camera-controls button,.ptz button{background:#213043;border:1px solid #34485d;border-radius:7px;color:#d4e2ef;padding:7px 10px}
+.camera-controls button:hover,.ptz button:hover{background:#2a4b56}.camera-controls .delete{margin-left:auto;color:#f3a5a5}
+.ptz{border-top:1px solid #29394a;padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}.ptz span{font-size:11px;color:#8fa3b6;margin-right:7px}
+.notice{border:1px solid #4b6e7d;background:#153141;border-radius:8px;padding:12px;margin-bottom:20px;color:#e2f2f5}
+.list{display:flex;flex-direction:column;gap:9px;margin-top:17px}.list-item{display:flex;gap:15px;align-items:center;justify-content:space-between;border:1px solid #304255;border-radius:8px;padding:12px;background:#152432;overflow-wrap:anywhere}
+.list-item small{display:block;color:#88a3b8;margin-top:4px}.list-item button{white-space:nowrap}
+.storage-box code{display:block;margin:14px 0;overflow-wrap:anywhere}.storage-box p{font-size:13px;color:#91a3b5;line-height:1.6}
+.login{min-height:100vh;display:grid;place-items:center;padding:25px}.login-box{width:min(390px,100%);background:#131f2c;border:1px solid #314151;border-radius:18px;padding:30px;display:flex;flex-direction:column;gap:14px}
+.login-box h1{margin:0}.login-box p,.hint{color:#91a3b5;font-size:13px}.login-box label,dialog label{font-size:12px;color:#bdccda}
+input{display:block;width:100%;margin-top:6px;padding:12px;border-radius:8px;border:1px solid #405367;background:#0f1925;color:#eaf0f6;outline:none}
+input:focus{border-color:#55c9ab}dialog{color:#e7edf3;background:#152232;border:1px solid #34475a;border-radius:14px;width:min(600px,95vw);max-height:88vh;padding:24px}
+dialog::backdrop{background:rgba(0,0,0,.75)}dialog form{display:flex;flex-direction:column;gap:13px}dialog form p,dialog>p{color:#96a8ba;font-size:13px;line-height:1.5}
+.dialog-header{display:flex;justify-content:space-between;align-items:center}.dialog-header h2{margin:0}.text-button{background:transparent;color:#d9e6f1;border:0;font-size:18px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:10px}.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#recordingsDialog{width:min(760px,95vw)}#recordedVideo{width:100%;background:#050b12;max-height:420px;margin-top:13px}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.camera-grid{grid-template-columns:1fr}}
+@media(max-width:670px){.sidebar{width:58px}.sidebar .logo div,.nav-item span,.sidebar-bottom span,.sidebar-bottom button{display:none}.logo{padding:17px 13px}.nav{padding:10px 6px}.nav-item{justify-content:center;padding:12px}.sidebar-bottom{justify-content:center}.workspace{padding:19px}.top-actions{flex-wrap:wrap;justify-content:flex-end}.clock{display:none}header h1{font-size:20px}.stats{gap:8px}.stats article{padding:13px}.stats strong{font-size:21px}.two-cols{grid-template-columns:1fr}}
+
+/* Camera registration: discovery table above registered channels. */
+.panel{background:#131e2a;border:1px solid #293a4b;border-radius:12px;margin-bottom:20px;overflow:hidden}
+.panel-heading{display:flex;gap:15px;justify-content:space-between;align-items:center;padding:20px 21px 15px}
+.panel-heading h3{margin:0 0 7px;font-size:16px}
+.panel-heading p{margin:0;color:#93a7b9;font-size:12px}
+.count{padding:7px 11px;border-radius:20px;background:#253648;color:#bcd0e1;font-size:11px;white-space:nowrap}
+.scan-toolbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;padding:2px 21px 17px}
+.scan-toolbar label{color:#afc1d0;font-size:12px;flex:1;min-width:160px}
+.scan-toolbar label:first-child{max-width:190px}
+.scan-toolbar label:nth-child(2){max-width:270px}
+.scan-toolbar input,.scan-toolbar select{width:100%;min-height:43px;margin-top:7px;background:#0f1925;border:1px solid #405367;color:#eaf0f6;border-radius:8px;padding:9px 12px}
+.scan-toolbar button{min-height:43px}
+.scan-feedback{color:#91b5c8;font-size:12px;line-height:1.5;padding:0 21px 15px}
+.table-scroll{overflow-x:auto;border-top:1px solid #293a4b}
+.device-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;white-space:nowrap}
+.device-table th{padding:12px 14px;color:#9db0c4;background:#192736;font-weight:600;letter-spacing:.1px}
+.device-table td{padding:11px 14px;border-top:1px solid #293949;color:#d6e2ec}
+.device-table tbody tr:hover{background:#1a2c3a}
+.device-table th:last-child,.device-table td:last-child{text-align:right}
+.device-table .mono{font-family:Consolas,monospace}
+.device-table .green-text{color:#4fd3ac}.device-table .soft-text{color:#adc1d0}
+.device-table .empty-table{padding:26px;text-align:center;color:#849aaf}
+.small-button{padding:7px 11px;color:#e2f4ef;border:1px solid #417163;background:#1a403b;border-radius:6px;font-size:11px}
+.small-button:hover{background:#275b4f}.small-button:disabled{opacity:.45;cursor:not-allowed}
+.row-actions{display:flex;gap:6px;justify-content:flex-end}
+.danger-button{background:#36252b;border-color:#694752;color:#ffc2c3}
+.danger-button:hover{background:#513039}
+.panel-actions{padding:13px 20px;display:flex;justify-content:flex-end}
+.panel-actions button{padding:8px 12px}
+.device-hint{padding:12px;background:#1b3541;color:#aed3db;border:1px solid #325465;border-radius:8px;font-size:12px}
+.dialog-actions{flex-wrap:wrap}
+@media(max-width:670px){
+  .scan-toolbar label,.scan-toolbar label:first-child,.scan-toolbar label:nth-child(2){max-width:100%;min-width:100%}
+  .scan-toolbar button{flex:1}
+  .panel-heading{padding:15px;align-items:flex-start}
+  .scan-toolbar{padding:0 15px 15px}
+  .scan-feedback{padding:0 15px 15px}
+  .device-table th,.device-table td{padding:10px}
+}
+
+
+/* Manual camera dialog: layout inspired by the Intelbras "Ad. Manual" window,
+   keeping NVR Video LAN's colors and browser accessibility. */
+.manual-camera-dialog{
+  width:min(690px,96vw);
+  max-height:91vh;
+  padding:0;
+  overflow-y:auto;
+  border-radius:9px;
+  border-color:#3c4c59;
+  box-shadow:0 26px 70px #0009;
+}
+.manual-camera-dialog form{gap:0}
+.manual-dialog-header{
+  padding:17px 23px;
+  background:#243240;
+  border-bottom:1px solid #43515f;
+}
+.manual-dialog-header h2{font-size:17px;font-weight:650}
+.manual-camera-dialog .device-hint{margin:16px 24px 0}
+.manual-camera-fields{
+  display:grid;
+  grid-template-columns:148px minmax(0,1fr);
+  align-items:center;
+  gap:11px 18px;
+  padding:21px 25px 13px;
+}
+.manual-camera-fields label{
+  margin:0;
+  color:#d2dce4;
+  font-size:13px;
+  font-weight:550;
+}
+.manual-camera-fields input,
+.manual-camera-fields select,
+.advanced-fields input{
+  width:100%;
+  min-height:37px;
+  margin:0;
+  padding:8px 11px;
+  color:#f0f5f8;
+  background:#101a24;
+  border:1px solid #40556a;
+  border-radius:5px;
+  outline:0;
+  font-size:13px;
+}
+.manual-camera-fields input:focus,
+.manual-camera-fields select:focus,
+.advanced-fields input:focus{border-color:#5cd2b1}
+.manual-camera-fields input[readonly]{
+  background:#202e3b;
+  color:#a6b9c7;
+}
+.protocol-tip{
+  margin:3px 25px 14px;
+  color:#a9bece;
+  font-size:12px;
+  line-height:1.5;
+}
+.camera-advanced{
+  margin:0 24px 14px;
+  border:1px solid #344758;
+  background:#152331;
+  border-radius:7px;
+}
+.camera-advanced summary{
+  padding:12px 15px;
+  color:#b9cedb;
+  font-size:12px;
+  cursor:pointer;
+}
+.advanced-fields{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  padding:4px 15px 15px;
+}
+.advanced-fields label{color:#bfd0dd;font-size:12px}
+.advanced-fields input{margin-bottom:6px}
+.manual-feedback{
+  padding:0 25px 10px;
+  color:#a6d3e1;
+  font-size:12px;
+  line-height:1.5;
+  min-height:8px;
+}
+.manual-dialog-actions{
+  padding:14px 24px;
+  margin:0;
+  border-top:1px solid #334757;
+  background:#172431;
+  align-items:center;
+}
+.manual-dialog-actions #detectStreams{margin-right:auto}
+.manual-dialog-actions button{padding:10px 14px}
+@media(max-width:560px){
+  .manual-camera-fields{grid-template-columns:1fr;gap:6px;padding:18px}
+  .manual-camera-fields label{margin-top:7px}
+  .manual-dialog-header{padding:15px 18px}
+  .manual-camera-dialog .device-hint,
+  .camera-advanced{margin-left:18px;margin-right:18px}
+  .protocol-tip{margin-left:18px;margin-right:18px}
+  .manual-feedback{padding-left:18px;padding-right:18px}
+  .manual-dialog-actions{padding:13px 18px}
+  .manual-dialog-actions #detectStreams{margin-right:0;flex:1 1 100%}
+}
+
+
+/* First-run access wizard and the optional-password settings page */
+.setup-box{width:min(485px,96vw);gap:13px}
+.setup-box .eyebrow{margin:0}
+.setup-box h1{font-size:23px;line-height:1.2}
+.security-choice{display:grid;gap:10px}
+.security-choice .choice{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:13px 14px;background:#101c29;
+  border:1px solid #34495c;border-radius:10px;
+  cursor:pointer;color:#e8f0f5;font-size:13px
+}
+.security-choice .choice:has(input:checked){
+  border-color:#52c9a8;background:#173730
+}
+.security-choice .choice input{
+  width:17px;height:17px;flex:none;accent-color:#52c9a8;
+  margin:1px 0 0
+}
+.security-choice .choice b{display:block;font-size:14px;margin-bottom:4px}
+.security-choice .choice small{
+  display:block;color:#9bafc1;line-height:1.5;font-size:12px
+}
+.setup-password-fields,#securityCurrentPasswordRow,#securityNewPasswordFields{
+  display:grid;gap:9px
+}
+.setup-password-fields label,.security-panel label:not(.choice){font-size:12px;color:#b6c9d9}
+.setup-box .small-hint{font-size:11px;line-height:1.5;color:#8ea0af;margin:0}
+.setup-box .hint,.security-panel .hint{color:#ffb6b6;margin:0;min-height:16px}
+.security-panel{
+  max-width:570px;padding:22px;
+  display:flex;flex-direction:column;gap:17px
+}
+.security-panel .security-choice{margin:0}
+.security-panel .security-status{margin:0;color:#afd1df;font-size:13px}
+.security-panel input:not([type=radio]){margin-top:4px}
+.security-panel .primary{align-self:flex-start}
+
+
+/* Multi-camera mosaic: 1, 2, 4, 9 or 16 simultaneous previews. */
+.mosaic-toolbar{
+  display:flex;flex-wrap:wrap;align-items:center;gap:16px;
+  margin:0 0 16px;padding:12px 15px;
+  background:#152333;border:1px solid #293a4b;border-radius:10px
+}
+.mosaic-toolbar label{color:#b9cede;font-size:12px}
+.mosaic-toolbar select,
+.storage-form select,.camera-operation select{
+  display:block;min-height:38px;width:100%;margin-top:6px;padding:8px;
+  background:#101a24;color:#edf5f7;border:1px solid #40576a;
+  border-radius:7px;font:inherit
+}
+.mosaic-toolbar select{min-width:160px}
+.camera-selection{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1}
+.camera-choice{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 10px;border:1px solid #395267;border-radius:7px;
+  background:#112031;font-size:12px;white-space:nowrap;cursor:pointer
+}
+.camera-choice input{margin:0;width:15px;height:15px;accent-color:#54c9ab}
+.camera-grid[data-cols="1"]{grid-template-columns:repeat(1,minmax(0,1fr))}
+.camera-grid[data-cols="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.camera-grid[data-cols="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+.camera-grid[data-cols="4"]{grid-template-columns:repeat(4,minmax(0,1fr))}
+.camera-grid[data-cols="3"] .camera-controls button,
+.camera-grid[data-cols="4"] .camera-controls button{font-size:11px;padding:5px 7px}
+.camera-grid[data-cols="4"] .camera-top{padding:10px}
+.ptz-check{color:#80d7ca!important}
+@media(max-width:900px){
+  .camera-grid[data-cols="3"],.camera-grid[data-cols="4"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:580px){
+  .camera-grid[data-cols]{grid-template-columns:1fr}
+  .mosaic-toolbar select{min-width:125px}
+}
+
+/* Camera-specific source selection and weekly recording agenda. */
+.camera-operation{
+  border:1px solid #324958;border-radius:8px;
+  margin:8px 24px 15px;padding:12px 15px 15px;
+}
+.camera-operation legend{padding:0 8px;color:#bcdfd6;font-size:13px;font-weight:650}
+.camera-operation label{font-size:12px;color:#becdd9}
+.camera-operation .check-label{display:flex;align-items:center;gap:9px;font-weight:650;margin-bottom:8px}
+.camera-operation input[type="checkbox"]{
+  margin:0;width:17px;height:17px;accent-color:#54c9ab
+}
+.operation-streams{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.operation-streams label{display:block}
+.operation-streams label.check-label{display:flex}
+.operation-streams select{margin-top:9px}
+.schedule-days{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0}
+.schedule-days label{
+  display:flex;align-items:center;gap:5px;
+  padding:7px 8px;border:1px solid #3a5061;border-radius:6px;
+  cursor:pointer;background:#142534
+}
+#scheduleWindow .two-cols label{display:block}
+#scheduleWindow p{font-size:12px;color:#97b0be;line-height:1.5}
+#scheduleWindow .two-cols input{margin:5px 0}
+.storage-form{
+  padding:20px;max-width:720px;display:flex;flex-direction:column;gap:12px
+}
+.storage-form h3{margin:0;font-size:16px}
+.storage-form p{font-size:12px;color:#a5bac9;line-height:1.5}
+.storage-form select{max-width:480px}
+.storage-form .two-cols{max-width:480px}
+.storage-form #storageFeedback{padding:0;margin:0}
+.storage-form button{align-self:flex-start}
+@media(max-width:560px){
+  .operation-streams{grid-template-columns:1fr}
+  .camera-operation{margin-left:18px;margin-right:18px}
+}
+
+
+/* Independent audio permissions for saved video and live preview. */
+.recording-audio-control{margin-top:13px!important;padding:10px 11px;background:#132d32;border:1px solid #345c59;border-radius:8px}
+.camera-controls .listen-button{border-color:#4cbba7;color:#8ee0cc;font-weight:650}
+
+
+/* Início: quick overview with real process status, not an extra video wall. */
+.home-stats{grid-template-columns:repeat(5,minmax(0,1fr));margin:18px 0 20px}
+.home-stats article{padding:17px;min-width:0}
+.home-stats strong{font-size:23px;overflow-wrap:anywhere}
+.home-panels{display:grid;grid-template-columns:1.3fr 1fr;gap:17px}
+.home-panel{padding:20px;min-width:0}
+.home-panel h3{margin:0 0 14px;font-size:15px}
+.home-panel p{color:#b0c1cf;font-size:13px;line-height:1.6}
+.home-camera-summary{max-height:450px;overflow:auto}
+.home-camera-line{padding:12px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #2c3e4e}
+.home-camera-line:last-child{border-bottom:0}
+.home-camera-line b{font-size:13px}
+.home-camera-states{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.home-state{font-size:11px;color:#adbcc9;background:#233041;border:1px solid #405063;border-radius:6px;padding:5px 8px}
+.home-state.active{color:#86e8ca;background:#163b37;border-color:#32675b}
+.home-shortcuts{margin-top:22px;display:flex;gap:8px;flex-wrap:wrap}
+
+/* Visualização contains only the camera images and tiny media labels. */
+.live-tile{position:relative;min-width:0}
+.live-tile .video-wrap{aspect-ratio:16/9}
+.live-camera-label{position:absolute;bottom:9px;left:10px;pointer-events:none;
+  max-width:calc(100% - 95px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  border-radius:5px;padding:5px 9px;background:rgba(0,0,0,.7);
+  font-size:12px;font-weight:650;color:#fff}
+.live-sound{position:absolute;bottom:9px;right:9px;background:rgba(0,0,0,.78);
+  border:1px solid #658b85;border-radius:5px;color:#e1fff8;padding:5px 9px;font-size:11px}
+.live-tile:hover .live-sound{background:#164c46}
+#cameraGrid .live-tile{border-radius:8px}
+
+/* Dated, 4-camera archived playback with individual MP4 controls. */
+.recordings-page{padding:17px}
+.recordings-toolbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
+.recordings-toolbar label{color:#afc0d1;font-size:12px}
+.recordings-toolbar input{display:block;margin-top:6px;background:#0e1925;border:1px solid #42596c;
+  border-radius:7px;padding:10px;color:#f2f9fb;color-scheme:dark;min-height:40px}
+.recordings-feedback,.recordings-tip{font-size:12px;line-height:1.6;color:#adbfce;margin:12px 0}
+.recordings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0}
+.recording-tile{padding:12px;background:#101d2b;border:1px solid #2e4355;border-radius:10px;min-width:0}
+.recording-tile > label{display:block;font-size:12px;font-weight:650;color:#d7e9ed;margin-bottom:7px}
+.recording-camera,.recording-clip{display:block;background:#0d1724;color:#e6f5f5;
+  border:1px solid #3d5668;border-radius:7px;min-height:37px;
+  padding:8px;width:100%;min-width:0}
+.recording-tile video{display:block;width:100%;aspect-ratio:16/9;background:#030b13;
+  border-radius:7px;margin:10px 0;object-fit:contain}
+.recording-tile-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.recording-tile-controls .recording-clip{flex:1 1 180px;width:auto}
+.recording-tile-controls .secondary{font-size:12px;padding:9px 11px}
+.recording-download{color:#8ce4c9;font-size:12px;text-decoration:none;
+  border-bottom:1px solid #457d74;padding-bottom:2px}
+.recording-status{display:block;min-height:18px;margin-top:9px;color:#95aebf;overflow-wrap:anywhere}
+.ptz-settings-actions{display:flex;gap:8px;flex-wrap:wrap}
+#ptzCameraControls p{font-size:12px;color:#b5cbd8}
+#ptzCameraControls .secondary{padding:8px 12px}
+@media(max-width:1200px){.home-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:950px){.home-panels{grid-template-columns:1fr}}
+@media(max-width:740px){.recordings-grid{grid-template-columns:1fr}
+  .home-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .home-camera-line{align-items:flex-start;flex-direction:column}
+  .home-camera-states{justify-content:flex-start}}
+
+/* Installer-managed LAN connection shortcuts. */
+.system-network{padding:18px 20px;margin-bottom:18px}
+.system-network h3{margin:0 0 7px;font-size:15px}
+.system-network p{color:#aebfcb;font-size:12px;line-height:1.6}
+.network-address-list{margin:10px 0}
+.network-address-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+  border:1px solid #2e4655;border-radius:7px;padding:9px;margin-top:7px}
+.network-address{color:#87e2c9;font-size:14px;font-weight:650;text-decoration:none;overflow-wrap:anywhere}
+.network-address-row .soft-text{flex:1;font-size:12px}
+.network-address-row button{background:#193c39;color:#d4f7ed;border:1px solid #397666;
+  border-radius:6px;padding:6px 12px;font-size:12px}
+
+
+/* Traffic history sampled locally by NVR (no external chart library). */
+.network-traffic{margin-top:17px;padding:20px}
+.network-traffic-top{display:flex;align-items:flex-start;justify-content:space-between;
+  gap:15px;flex-wrap:wrap;margin-bottom:14px}
+.network-traffic-top h3{margin:0 0 5px;font-size:15px}
+.network-traffic-top p{color:#9fb2c3;font-size:12px;margin:0}
+.traffic-legends{display:flex;flex-wrap:wrap;gap:14px;font-size:12px}
+.traffic-download{color:#6bc5ed}.traffic-upload{color:#61d0ac}
+.traffic-legends strong{font-size:18px;padding:0 3px}
+#networkChart{display:block;width:100%;height:180px;background:#0c1723;
+  border:1px solid #273b4b;border-radius:7px}
+.network-chart-status{font-size:11px;color:#92a9b8;margin:9px 0 0}
+.desktop-options-panel{padding:20px;margin:18px 0}
+.desktop-options-panel h3{margin:0 0 8px;font-size:16px}
+.desktop-options-panel p{font-size:12px;line-height:1.6;color:#afc2d1}
+.desktop-check{display:flex;align-items:flex-start;gap:10px;margin:13px 0;font-size:13px}
+.desktop-check input{margin-top:3px}
+.desktop-camera-label{display:block;max-width:600px;font-size:12px;
+  color:#b7c8d7;margin:16px 0 14px}
+.desktop-camera-label select{display:block;margin-top:7px;min-width:260px;
+  width:100%;padding:10px;background:#0d1d2a;border:1px solid #395367;
+  color:#e6f5f7;border-radius:7px}
+.desktop-link{display:inline-flex;align-items:center;text-decoration:none;font-size:13px}
+.desktop-options-panel .system-actions{margin-top:18px}
+#lockLiveCamera{white-space:nowrap;font-size:12px}
+
+.mosaic-custom-fields{display:flex;gap:12px;align-items:center}.mosaic-custom-fields.hidden{display:none}.mosaic-custom-fields input{width:70px}.mosaic-empty-slot{aspect-ratio:16/9;display:grid;place-items:center;color:#8495a6;background:#0b121b}#cameraGrid:fullscreen{height:100%;width:100%;padding:4px;gap:4px;background:#000;grid-template-rows:repeat(var(--mosaic-rows,3),minmax(0,1fr));overflow:hidden}#cameraGrid:fullscreen .live-tile{min-height:0;height:100%;overflow:hidden}#cameraGrid:fullscreen .video-wrap{height:100%;aspect-ratio:auto}#cameraGrid:fullscreen video{height:100%;width:100%;object-fit:contain}#cameraGrid:fullscreen .mosaic-empty-slot{aspect-ratio:auto}

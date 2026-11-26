@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>NVR Video LAN</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/hls.min.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <main id="setup" class="login hidden">
+    <form id="setupForm" class="login-box setup-box">
+      <div class="brand-mark">◉</div>
+      <p class="eyebrow">PRIMEIRO ACESSO</p>
+      <h1>Bem-vindo ao NVR Video LAN</h1>
+      <p>Escolha como deseja acessar o painel neste computador. Você poderá alterar essa configuração depois, no menu Segurança.</p>
+      <div class="security-choice">
+        <label class="choice"><input type="radio" name="setupMode" value="none" checked>
+          <span><b>Entrar sem senha</b><small>Acesso direto no próprio servidor. Ideal para os testes locais.</small></span>
+        </label>
+        <label class="choice"><input type="radio" name="setupMode" value="password">
+          <span><b>Proteger com senha</b><small>Solicitar senha para acessar câmeras e gravações.</small></span>
+        </label>
+      </div>
+      <div id="setupPasswordFields" class="hidden setup-password-fields">
+        <label for="setupPassword">Criar senha (4 a 8 caracteres)</label>
+        <input id="setupPassword" type="password" minlength="4" maxlength="8" autocomplete="new-password">
+        <label for="setupPasswordConfirm">Confirmar senha</label>
+        <input id="setupPasswordConfirm" type="password" minlength="4" maxlength="8" autocomplete="new-password">
+      </div>
+      <p id="setupError" class="hint" role="alert"></p>
+      <button class="primary" type="submit">Salvar e abrir painel</button>
+      <p class="small-hint">Sem senha, o painel fica limitado a 127.0.0.1. Não é liberado para outros dispositivos da rede.</p>
+    </form>
+  </main>
+  <main id="login" class="login hidden">
+    <form id="loginForm" class="login-box">
+      <div class="brand-mark">◉</div>
+      <h1>NVR Video LAN</h1>
+      <p>Acesse seu sistema de monitoramento local.</p>
+      <label for="password">Senha de administrador</label>
+      <input id="password" type="password" autocomplete="current-password" required autofocus>
+      <button type="submit" class="primary">Entrar</button>
+      <p class="hint" id="loginError" role="alert"></p>
+    </form>
+  </main>
+  <div id="dashboard" class="app hidden">
+    <aside class="sidebar">
+      <div class="logo"><span class="brand-mark">◉</span><div><b>NVR Video LAN</b><small>Controle de câmeras</small></div></div>
+      <div class="nav">
+        <button id="navHome" class="nav-item selected">⌂ <span>Início</span></button>
+        <button id="navCameras" class="nav-item">▣ <span>Visualização</span></button>
+        <button id="navRecordings" class="nav-item">▤ <span>Gravações</span></button>
+        <button id="navDiscovery" class="nav-item">◉ <span>Cadastro de câmeras</span></button>
+        <button id="navSystem" class="nav-item">⚙ <span>Sistema</span></button>
+      </div>
+      <div class="sidebar-bottom"><div class="status-dot"></div><span>Servidor local</span><small id="nvrVersion" title="Versão em execução">Versão: carregando</small><button id="logout" title="Sair">Sair</button></div>
+    </aside>
+    <section class="workspace">
+      <header>
+        <div><span class="eyebrow">CENTRAL DE MONITORAMENTO</span><h1 id="pageTitle">Início</h1></div>
+        <div class="top-actions"><span class="clock" id="clock"></span><button id="addCamera" class="primary">+ Cadastrar câmeras</button></div>
+      </header>
+      <div id="messages" class="notice hidden" role="status"></div>
+      <section id="homeView">
+        <div class="section-title">
+          <h2>Resumo do NVR</h2>
+          <p>Estado das câmeras, gravações, visualização e armazenamento.</p>
+        </div>
+        <div class="stats home-stats">
+          <article><small>CÂMERAS CADASTRADAS</small><strong id="cameraCount">—</strong></article>
+          <article><small>GRAVAÇÕES ATIVAS</small><strong id="activeRecordings">—</strong></article>
+          <article><small>VISUALIZAÇÕES ATIVAS</small><strong id="activePreviews">—</strong></article>
+          <article><small>ESPAÇO LIVRE</small><strong id="freeSpace">—</strong></article>
+          <article><small>LIMITE DE GRAVAÇÕES</small><strong id="diskLimit">—</strong></article>
+        </div>
+        <div class="home-panels">
+          <div class="panel home-panel">
+            <h3>Situação das câmeras</h3>
+            <div id="homeCameraSummary" class="home-camera-summary"></div>
+          </div>
+          <div class="panel home-panel">
+            <h3>Armazenamento</h3>
+            <p id="homeStorageSummary">Carregando informações…</p>
+            <div class="home-shortcuts">
+              <button id="homeViewLive" class="primary" type="button">Ver câmeras ao vivo</button>
+              <button id="homeViewRecordings" class="secondary" type="button">Consultar gravações</button>
+              <button id="homeOpenSystem" class="secondary" type="button">Configurar sistema</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel network-traffic">
+          <div class="network-traffic-top">
+            <div><h3>Tráfego da rede</h3><p>Download e upload em tempo real nas interfaces de rede ativas do servidor.</p></div>
+            <div class="traffic-legends">
+              <span class="traffic-download">↓ Download <strong id="netDownload">—</strong> Mbps</span>
+              <span class="traffic-upload">↑ Upload <strong id="netUpload">—</strong> Mbps</span>
+            </div>
+          </div>
+          <canvas id="networkChart" height="180" role="img" aria-label="Gráfico de tráfego de rede de download e upload em Mbps"></canvas>
+          <p id="networkChartStatus" class="network-chart-status">Coletando dados de rede…</p>
+        </div>
+      </section>
+      <section id="cameraView" class="hidden">
+        <div class="section-title"><h2>Visualização ao vivo</h2><p>Somente as imagens das câmeras. Para editar ou controlar PTZ, utilize Cadastro de câmeras.</p></div>
+        <div class="mosaic-toolbar">
+          <label for="gridLayout">Divisão da tela
+            <select id="gridLayout">
+              <option value="1">1 câmera</option>
+              <option value="2">2 câmeras</option>
+              <option value="4" selected>4 câmeras (2 × 2)</option>
+              <option value="9">9 câmeras (3 × 3)</option>
+              <option value="3x4">12 câmeras (3 linhas × 4 colunas)</option>
+              <option value="4x3">12 câmeras (4 linhas × 3 colunas)</option>
+              <option value="16">16 câmeras (4 × 4)</option>
+              <option value="custom">Personalizado</option>
+            </select>
+          </label>
+          <div id="gridCustomDimensions" class="mosaic-custom-fields hidden">
+            <label>Linhas <input id="gridRows" type="number" min="1" max="16" value="3"></label>
+            <label>Colunas <input id="gridColumns" type="number" min="1" max="16" value="4"></label>
+          </div>
+          <button id="fullscreenMosaic" type="button" class="secondary">Tela cheia</button>
+          <div id="cameraSelection" class="camera-selection" aria-label="Câmeras no mosaico"></div>
+          <button id="applyLinuxMonitor" type="button" class="secondary hidden">Aplicar no monitor do servidor</button>
+          <button id="lockLiveCamera" type="button" class="secondary" title="Salva a câmera selecionada e abre automaticamente em tela cheia ao entrar no Windows.">Fixar câmera no monitor</button>
+        </div>
+        <div id="cameraGrid" class="camera-grid" data-cols="2"></div>
+      </section>
+      <section id="recordingsView" class="hidden">
+        <div class="section-title">
+          <h2>Gravações</h2>
+          <p>Escolha uma data no calendário e reproduza até quatro câmeras ao mesmo tempo. Cada câmera mantém seus próprios arquivos.</p>
+        </div>
+        <div class="panel recordings-page">
+          <div class="recordings-toolbar">
+            <label for="recordingsDate">Calendário
+              <input id="recordingsDate" type="date" required>
+            </label>
+            <label for="recordingsTime">Horário de referência
+              <input id="recordingsTime" type="time" value="12:00" step="60">
+            </label>
+            <button id="refreshRecordings" type="button" class="secondary">↻ Buscar gravações</button>
+            <button id="playAllRecordings" type="button" class="primary">▶ Reproduzir até 4</button>
+            <button id="pauseAllRecordings" type="button" class="secondary">Ⅱ Pausar todas</button>
+          </div>
+          <p id="recordingsFeedback" class="recordings-feedback" role="status">Escolha o dia e as câmeras. A reprodução simultânea aproxima os horários, sem garantir sincronismo exato.</p>
+          <div id="recordingsGrid" class="recordings-grid">
+            <article class="recording-tile" data-slot="0">
+              <label for="recordingCamera0">Câmera 1</label><select id="recordingCamera0" class="recording-camera"></select>
+              <video id="recordedVideo0" controls playsinline preload="metadata" muted></video>
+              <div class="recording-tile-controls">
+                <select id="recordingClip0" class="recording-clip" aria-label="Arquivo da câmera 1"></select>
+                <button id="recordingPlay0" type="button" class="secondary">Reproduzir</button>
+                <a id="recordingDownload0" class="recording-download hidden" download>Baixar</a>
+              </div>
+              <small id="recordingStatus0" class="recording-status">Selecione uma câmera</small>
+            </article>
+            <article class="recording-tile" data-slot="1">
+              <label for="recordingCamera1">Câmera 2</label><select id="recordingCamera1" class="recording-camera"></select>
+              <video id="recordedVideo1" controls playsinline preload="metadata" muted></video>
+              <div class="recording-tile-controls">
+                <select id="recordingClip1" class="recording-clip" aria-label="Arquivo da câmera 2"></select>
+                <button id="recordingPlay1" type="button" class="secondary">Reproduzir</button>
+                <a id="recordingDownload1" class="recording-download hidden" download>Baixar</a>
+              </div>
+              <small id="recordingStatus1" class="recording-status">Selecione uma câmera</small>
+            </article>
+            <article class="recording-tile" data-slot="2">
+              <label for="recordingCamera2">Câmera 3</label><select id="recordingCamera2" class="recording-camera"></select>
+              <video id="recordedVideo2" controls playsinline preload="metadata" muted></video>
+              <div class="recording-tile-controls">
+                <select id="recordingClip2" class="recording-clip" aria-label="Arquivo da câmera 3"></select>
+                <button id="recordingPlay2" type="button" class="secondary">Reproduzir</button>
+                <a id="recordingDownload2" class="recording-download hidden" download>Baixar</a>
+              </div>
+              <small id="recordingStatus2" class="recording-status">Selecione uma câmera</small>
+            </article>
+            <article class="recording-tile" data-slot="3">
+              <label for="recordingCamera3">Câmera 4</label><select id="recordingCamera3" class="recording-camera"></select>
+              <video id="recordedVideo3" controls playsinline preload="metadata" muted></video>
+              <div class="recording-tile-controls">
+                <select id="recordingClip3" class="recording-clip" aria-label="Arquivo da câmera 4"></select>
+                <button id="recordingPlay3" type="button" class="secondary">Reproduzir</button>
+                <a id="recordingDownload3" class="recording-download hidden" download>Baixar</a>
+              </div>
+              <small id="recordingStatus3" class="recording-status">Selecione uma câmera</small>
+            </article>
+          </div>
+          <p class="recordings-tip">O calendário usa a data local da gravação. Arquivos H.265 podem não ser reproduzidos em todos os navegadores. Os quatro vídeos começam no horário mais próximo disponível; pode haver diferenças entre segmentos.</p>
+        </div>
+      </section>
+      <section id="discoveryView" class="hidden">
+        <div class="section-title">
+          <h2>Cadastro de câmeras</h2>
+          <p>Busque os dispositivos da rede, configure usuário/senha e adicione os fluxos RTSP principal e extra.</p>
+        </div>
+        <div class="panel scan-panel">
+          <div class="panel-heading">
+            <div><h3>Dispositivos encontrados</h3><p>Busca ONVIF ou identificação de serviços RTSP na faixa selecionada.</p></div>
+            <span id="scanResultCount" class="count">0 dispositivos</span>
+          </div>
+          <div class="scan-toolbar">
+            <label for="scanMode">Protocolo
+              <select id="scanMode"><option value="all">ONVIF + RTSP</option><option value="onvif">ONVIF</option><option value="rtsp">RTSP</option></select>
+            </label>
+            <label for="scanSubnet">Faixa da rede (IPv4)
+              <input id="scanSubnet" placeholder="192.168.10.0/24" inputmode="text">
+            </label>
+            <button id="discover" class="primary" type="button">⌕ Buscar dispositivos</button>
+            <button id="manualAdd" class="secondary" type="button">+ Adicionar manualmente</button>
+          </div>
+          <div id="scanFeedback" class="scan-feedback" role="status">Clique em Buscar dispositivos para iniciar a procura.</div>
+          <div class="table-scroll">
+            <table class="device-table">
+              <thead><tr>
+                <th>Nº</th><th>Endereço IP</th><th>Porta</th><th>Nome / Identificação</th>
+                <th>Protocolo</th><th>Status</th><th>Ação</th>
+              </tr></thead>
+              <tbody id="discoveredRows"><tr><td colspan="7" class="empty-table">Nenhuma busca realizada.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel registered-panel">
+          <div class="panel-heading">
+            <div><h3>Câmeras cadastradas</h3><p>Equipamentos configurados para visualização e gravação.</p></div>
+            <span id="registeredCount" class="count">0 câmeras</span>
+          </div>
+          <div class="table-scroll">
+            <table class="device-table">
+              <thead><tr>
+                <th>Canal</th><th>Nome</th><th>Endereço IP</th><th>Porta RTSP</th>
+                <th>Protocolo</th><th>Gravação / stream</th><th>Visualização / stream</th><th>Agenda</th><th>Ações</th>
+              </tr></thead>
+              <tbody id="registeredRows"><tr><td colspan="9" class="empty-table">Nenhuma câmera cadastrada.</td></tr></tbody>
+            </table>
+          </div>
+          <div class="panel-actions"><button id="registeredRefresh" type="button" class="secondary">↻ Atualizar</button></div>
+        </div>
+      </section>
+      <section id="systemView" class="hidden">
+        <div class="section-title"><h2>Sistema</h2><p>Rede local, segurança, armazenamento e manutenção do NVR.</p></div>
+        <div class="panel system-network">
+          <h3>Acesso pela rede local</h3>
+          <p>Quando instalado pelo Setup, o NVR é iniciado automaticamente com o Windows e o firewall permite acesso na rede privada. Os outros dispositivos não precisam instalar nada: abra um dos endereços abaixo no navegador.</p>
+          <div id="systemNetworkAddresses" class="network-address-list">Carregando endereços…</div>
+          <p id="systemNetworkStatus" class="scan-feedback" role="status"></p>
+          <p class="small-hint">Para acesso de outros dispositivos, configure uma senha em Segurança. A instalação não abre nenhuma porta no roteador; conexões pela internet não são habilitadas.</p>
+        </div>
+        <div class="panel desktop-options-panel">
+          <h3>Início do Windows e monitor em tela cheia</h3>
+          <p>Escolha se o gravador inicia com o Windows e se uma câmera específica deve ocupar a tela automaticamente ao entrar na área de trabalho.</p>
+          <form id="desktopOptionsForm">
+            <label class="check-label desktop-check">
+              <input id="startWithWindows" type="checkbox" checked>
+              Iniciar o gravador automaticamente com o Windows (mesmo sem entrar na conta).
+            </label>
+            <label class="check-label desktop-check">
+              <input id="monitorEnabled" type="checkbox">
+              Abrir o monitor fixo em tela cheia quando eu entrar no Windows.
+            </label>
+            <label class="desktop-camera-label" for="monitorCamera">Câmera que ficará fixa na tela
+              <select id="monitorCamera"></select>
+            </label>
+            <div class="system-actions">
+              <button type="submit" class="primary" id="saveDesktopOptions">Salvar inicialização e monitor</button>
+              <a id="openLocalMonitor" class="secondary desktop-link" href="/monitor" target="_blank" rel="noopener noreferrer">Abrir monitor neste computador</a>
+            </div>
+            <p class="scan-feedback" id="desktopOptionsFeedback" role="status">A janela em tela cheia só abre depois de fazer login no Windows. A gravação inicia independentemente do login.</p>
+          </form>
+        </div>
+        <div class="panel system-maintenance">
+          <h3>Manutenção do NVR</h3>
+          <p>Atualize as informações do painel ou reinicie apenas o processo NVR, sem reiniciar o Windows.</p>
+          <div class="system-actions">
+            <button id="refreshNvr" type="button" class="secondary">↻ Atualizar painel</button>
+            <button id="checkNvrUpdate" type="button" class="secondary">Verificar nova versão publicada</button>
+            <button id="applyNvrUpdate" type="button" class="primary" disabled>Aplicar atualização</button>
+            <button id="restartNvr" type="button" class="secondary danger-button">Reiniciar NVR</button>
+          </div>
+          <p id="maintenanceFeedback" role="status" class="scan-feedback">A atualização verifica um executável já publicado, sem baixar código do GitHub.</p>
+        </div>
+        <h3 class="system-section-heading">Armazenamento</h3>
+        <section id="storageView">
+        <div class="section-title"><h2>Armazenamento</h2><p>O NVR apaga somente gravações antigas de sua própria pasta quando atinge os limites configurados.</p></div>
+        <div id="storageSetupNotice" class="notice">Gravação aguardando configuração. Selecione a unidade, o limite e a reserva de espaço e clique em Salvar armazenamento. A visualização continua funcionando.</div>
+        <div class="storage-box"><small>PASTA DE GRAVAÇÕES</small><code id="storagePath">Não configurada</code><p>A gravação é segmentada em arquivos MP4 com duração configurável. O arquivo mais recente pode não estar disponível até ser finalizado.</p></div>
+        <form id="storageForm" class="panel storage-form">
+          <h3>Escolher disco e limite de armazenamento</h3>
+          <p><strong>Você escolhe o disco e o tamanho aqui.</strong> Nenhuma unidade é definida pelo PowerShell. A seleção é salva no arquivo de configuração do NVR e continua valendo após reiniciar. Os arquivos anteriores não são movidos nem apagados quando você troca o disco.</p>
+          <label>Discos de gravação (balanceamento automático)</label>
+          <div id="recordingDrive" role="group" aria-label="Discos de gravação"></div>
+          <div class="two-cols">
+            <label for="storageMaxGb">Limite de gravações por disco (GB)
+              <input id="storageMaxGb" type="number" min="1" max="50000" value="20" required>
+            </label>
+            <label for="storageFreeGb">Espaço livre mínimo por disco (GB)
+              <input id="storageFreeGb" type="number" min="1" max="50000" value="30" required>
+            </label>
+          </div>
+          <label for="storageSegmentSeconds">Duração de cada arquivo de gravação
+            <select id="storageSegmentSeconds">
+              <option value="30">30 segundos</option>
+              <option value="60" selected>1 minuto</option>
+              <option value="120">2 minutos</option>
+              <option value="300">5 minutos</option>
+              <option value="600">10 minutos</option>
+              <option value="900">15 minutos</option>
+              <option value="1800">30 minutos</option>
+            </select>
+          </label>
+          <p id="storageFeedback" class="scan-feedback" role="status"></p>
+          <button class="primary" type="submit">Salvar armazenamento</button>
+        </form>
+      </section>
+      <h3 class="system-section-heading">Segurança</h3>
+      <section id="securityView">
+        <div class="section-title"><h2>Segurança do painel</h2><p>Escolha se deseja solicitar senha no acesso ao NVR.</p></div>
+        <form id="securityForm" class="panel security-panel">
+          <p id="securityCurrentStatus" class="security-status"></p>
+          <div class="security-choice">
+            <label class="choice"><input type="radio" name="securityMode" value="none">
+              <span><b>Sem senha</b><small>Permite acesso local direto. Não disponibiliza o NVR sem senha na rede.</small></span>
+            </label>
+            <label class="choice"><input type="radio" name="securityMode" value="password">
+              <span><b>Com senha</b><small>Protege o painel e as APIs com login.</small></span>
+            </label>
+          </div>
+          <div id="securityCurrentPasswordRow" class="hidden">
+            <label for="currentSecurityPassword">Senha atual</label>
+            <input id="currentSecurityPassword" type="password" autocomplete="current-password">
+          </div>
+          <div id="securityNewPasswordFields" class="hidden">
+            <label for="newSecurityPassword">Nova senha (4 a 8 caracteres)</label>
+            <input id="newSecurityPassword" type="password" minlength="4" maxlength="8" autocomplete="new-password">
+            <label for="newSecurityPasswordConfirm">Confirmar nova senha</label>
+            <input id="newSecurityPasswordConfirm" type="password" minlength="4" maxlength="8" autocomplete="new-password">
+          </div>
+          <p id="securityError" class="hint" role="alert"></p>
+          <button class="primary" type="submit">Salvar configuração</button>
+        </form>
+      </section>
+      </section>
+    </section>
+  </div>
+  <dialog id="cameraDialog" class="manual-camera-dialog">
+    <form id="cameraForm">
+      <div class="dialog-header manual-dialog-header">
+        <h2 id="cameraDialogTitle">Adição manual</h2>
+        <button type="button" class="text-button" id="closeDialog" aria-label="Fechar">✕</button>
+      </div>
+      <div id="selectedDeviceHint" class="device-hint hidden"></div>
+      <div class="manual-camera-fields">
+        <label for="localChannel">Canal do NVR</label>
+        <input id="localChannel" name="localChannel" type="number" readonly title="Número informativo do próximo canal na lista">
+
+        <label for="cameraProtocol">Protocolo</label>
+        <select id="cameraProtocol" name="protocol">
+          <option value="onvif">ONVIF</option>
+          <option value="intelbras">Intelbras / Dahua (RTSP)</option>
+          <option value="rtsp">RTSP personalizado</option>
+        </select>
+
+        <label for="cameraIp">Endereço IP</label>
+        <input id="cameraIp" name="ip" inputmode="decimal" placeholder="192.168.10.102" required autocomplete="off">
+
+        <label for="rtspPort">Porta RTSP</label>
+        <input id="rtspPort" name="rtspPort" type="number" min="1" max="65535" value="554" required>
+
+        <label for="httpPort">Porta HTTP / ONVIF</label>
+        <input id="httpPort" name="httpPort" type="number" min="1" max="65535" value="80" required>
+
+        <label for="cameraUsername">Usuário</label>
+        <input id="cameraUsername" name="username" autocomplete="username" placeholder="admin">
+
+        <label for="cameraPassword">Senha</label>
+        <input id="cameraPassword" name="password" type="password" autocomplete="new-password">
+
+        <label for="remoteChannel">Canal remoto</label>
+        <input id="remoteChannel" name="remoteChannel" type="number" min="1" max="256" value="1" required>
+
+        <label for="cameraName">Nome do canal</label>
+        <input id="cameraName" name="name" placeholder="Ex.: Entrada principal" required maxlength="80">
+      </div>
+      <p id="protocolTip" class="protocol-tip"></p>
+      <fieldset class="camera-operation">
+        <legend>Gravação e visualização</legend>
+        <div class="operation-streams">
+          <div>
+            <label class="check-label"><input id="recordEnabled" name="recordEnabled" type="checkbox" checked> Ativar gravação</label>
+            <label for="recordingStream">Stream para gravar
+              <select id="recordingStream" name="recordingStream">
+                <option value="main">Principal (melhor qualidade)</option>
+                <option value="sub">Extra (mais leve)</option>
+              </select>
+            </label>
+            <label for="recordingCodec" class="recording-codec">Formato da gravação
+              <select id="recordingCodec" name="recordingCodec">
+                <option value="h264">H.264</option>
+                <option value="h265">H.265</option>
+                <option value="copy" selected>Original</option>
+              </select>
+            </label>
+            <p id="recordingCodecWarning" class="codec-warning">Original preserva a qualidade e economiza CPU. H.264 e H.265 exigem recodificação.</p>
+            <label class="check-label recording-audio-control" for="recordAudio">
+              <input id="recordAudio" name="recordAudio" type="checkbox">
+              Gravar áudio da câmera
+            </label>
+            <p class="codec-warning">Se o stream selecionado tiver microfone, o som será gravado em AAC junto com o vídeo MP4.</p>
+          </div>
+          <div>
+            <label class="check-label"><input id="previewEnabled" name="previewEnabled" type="checkbox" checked> Ativar visualização</label>
+            <label for="previewStream">Stream para visualizar
+              <select id="previewStream" name="previewStream">
+                <option value="sub" selected>Extra (mais leve)</option>
+                <option value="main">Principal (maior qualidade)</option>
+              </select>
+            </label>
+            <label class="check-label recording-audio-control" for="previewAudio">
+              <input id="previewAudio" name="previewAudio" type="checkbox">
+              Disponibilizar áudio ao vivo
+            </label>
+            <p class="codec-warning">O mosaico inicia sem som. Clique em Ouvir para ativar o áudio da câmera desejada.</p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="camera-operation">
+        <legend>Agenda de gravação</legend>
+        <label for="scheduleMode">Quando gravar
+          <select id="scheduleMode" name="scheduleMode">
+            <option value="always">Sempre (24 horas por dia)</option>
+            <option value="window">Conforme dias e horários</option>
+          </select>
+        </label>
+        <div id="scheduleWindow" class="hidden">
+          <div class="schedule-days" aria-label="Dias da semana">
+            <label><input type="checkbox" name="scheduleDay" value="1" checked> Seg</label>
+            <label><input type="checkbox" name="scheduleDay" value="2" checked> Ter</label>
+            <label><input type="checkbox" name="scheduleDay" value="3" checked> Qua</label>
+            <label><input type="checkbox" name="scheduleDay" value="4" checked> Qui</label>
+            <label><input type="checkbox" name="scheduleDay" value="5" checked> Sex</label>
+            <label><input type="checkbox" name="scheduleDay" value="6" checked> Sáb</label>
+            <label><input type="checkbox" name="scheduleDay" value="0" checked> Dom</label>
+          </div>
+          <div class="two-cols">
+            <label for="scheduleStart">Início <input id="scheduleStart" name="scheduleStart" type="time" value="08:00"></label>
+            <label for="scheduleEnd">Fim <input id="scheduleEnd" name="scheduleEnd" type="time" value="18:00"></label>
+          </div>
+          <p>Horários locais do servidor. Se o fim for antes do início, a gravação continua após a meia-noite. Horários iguais significam 24 horas nos dias selecionados.</p>
+        </div>
+      </fieldset>
+      <details id="advancedStreams" class="camera-advanced">
+        <summary>Configurações avançadas — endereços RTSP e serviço ONVIF</summary>
+        <div class="advanced-fields">
+          <label for="mainRtsp">RTSP principal (gravação)</label>
+          <input id="mainRtsp" name="mainRtsp" placeholder="rtsp://192.168.10.102:554/caminho">
+          <label for="subRtsp">RTSP extra (visualização)</label>
+          <input id="subRtsp" name="subRtsp" placeholder="rtsp://192.168.10.102:554/caminho-extra">
+          <label for="onvifUrl">Serviço ONVIF (opcional)</label>
+          <input id="onvifUrl" name="onvifUrl" placeholder="http://192.168.10.102/onvif/device_service">
+        </div>
+      </details>
+      <fieldset id="ptzCameraControls" class="camera-operation hidden">
+        <legend>Controle PTZ da câmera</legend>
+        <p>Use as setas para testar o movimento. O PTZ fica nas configurações, mantendo a visualização apenas com vídeos.</p>
+        <div class="ptz-settings-actions">
+          <button type="button" class="secondary" data-ptz="left">←</button>
+          <button type="button" class="secondary" data-ptz="up">↑</button>
+          <button type="button" class="secondary" data-ptz="down">↓</button>
+          <button type="button" class="secondary" data-ptz="right">→</button>
+          <button type="button" class="secondary" data-ptz="zoom_in">Zoom +</button>
+          <button type="button" class="secondary" data-ptz="zoom_out">Zoom −</button>
+          <button type="button" class="secondary" data-ptz="stop">Parar</button>
+          <button type="button" class="secondary" id="diagnosePtz">Diagnosticar PTZ</button>
+        </div>
+      </fieldset>
+      <div id="streamFeedback" class="manual-feedback" role="status" aria-live="polite"></div>
+      <div class="dialog-actions manual-dialog-actions">
+        <button id="detectStreams" class="secondary" type="button">Conectar / detectar RTSP</button>
+        <button id="cancelAdd" type="button" class="secondary">Cancelar</button>
+        <button class="primary" id="saveCamera" type="submit">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+<div style="text-align:center;padding:10px;font-size:12px"><a href="https://github.com/talisonmaurer" target="_blank" rel="noopener noreferrer">Desenvolvido por Talison Roberto Maurer</a></div>
+</body>
+</html>
