@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Version>0.6.5</Version>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>NvrVideoLan</AssemblyName>
+    <RootNamespace>NvrVideoLan</RootNamespace>
+  </PropertyGroup>
+
+  <!-- The UI works from embedded resources even if wwwroot is not copied alongside the EXE. -->
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot/index.html" LogicalName="NvrVideoLan.Web.index.html" />
+    <EmbeddedResource Include="wwwroot/app.js" LogicalName="NvrVideoLan.Web.app.js" />
+    <EmbeddedResource Include="wwwroot/style.css" LogicalName="NvrVideoLan.Web.style.css" />
+    <EmbeddedResource Include="wwwroot/monitor.html" LogicalName="NvrVideoLan.Web.monitor.html" />
+    <EmbeddedResource Include="wwwroot/monitor.js" LogicalName="NvrVideoLan.Web.monitor.js" />
+    <EmbeddedResource Include="wwwroot/hls.min.js" LogicalName="NvrVideoLan.Web.hls.min.js" />
+  </ItemGroup>
+
+  <!-- publish-embedded.ps1 prepares a verified FFmpeg archive before dotnet publish. -->
+  <ItemGroup Condition="'$(NvrEmbedFfmpeg)' == 'true'">
+    <EmbeddedResource Include="build/embedded/ffmpeg-bundle.zip"
+                      LogicalName="NvrVideoLan.EmbeddedFFmpeg" />
+  </ItemGroup>
+  <Target Name="CheckFFmpegBundle" BeforeTargets="CoreCompile"
+          Condition="'$(NvrEmbedFfmpeg)' == 'true' and !Exists('build/embedded/ffmpeg-bundle.zip')">
+    <Error Text="FFmpeg bundle nao encontrado. Execute .\publish-embedded.ps1 primeiro." />
+  </Target>
+</Project>
